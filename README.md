@@ -1,7 +1,7 @@
 # 인앤에듀 — 교수 연구 포트폴리오 웹사이트
 
 교육학과 교수의 연구, 수업 자료, 소개를 보여 주는 웹사이트입니다.
-지금은 데이터베이스 없이 동작하며, 나중에 Firebase(무료 Spark 요금제)의 Firestore와 Google 로그인을 붙일 수 있게 만들어 두었습니다.
+연구·수업 자료는 Firebase(무료 Spark 요금제)의 Firestore에 저장되고, 관리자는 Google 로그인 후 [관리] 화면에서 바로 추가·수정·삭제합니다.
 
 ---
 
@@ -22,23 +22,19 @@
 
 ---
 
-## 2. 내용 수정하는 곳 (이 3개 파일만 고치면 됩니다)
+## 2. 내용 수정하는 곳
 
-| 바꾸고 싶은 내용 | 파일 |
+| 바꾸고 싶은 내용 | 수정 방법 |
 | --- | --- |
-| 사이트 이름(인앤에듀)·한 줄 설명, 이름, 소속, 소개, 학력, 경력, 이메일, 연구 분야 | `src/data/profile.ts` |
-| 연구 목록 | `src/data/research.ts` |
-| 수업 자료 목록 | `src/data/teaching.ts` |
+| 연구 목록 | 사이트에서 관리자 계정으로 로그인 → 상단 **[관리]** → [연구] 탭 |
+| 수업 자료 | 사이트에서 관리자 계정으로 로그인 → 상단 **[관리]** → [수업 자료] 탭 |
+| 사이트 이름(인앤에듀)·한 줄 설명, 교수 이름, 소속, 소개, 학력, 경력, 이메일, 연구 분야 | 파일 `src/data/profile.ts` |
+| 관리자 계정(이메일) | 파일 `src/lib/admin.ts` **와** `firestore.rules` 두 곳 모두 (아래 5장 참고) |
 
-수정 요령:
-1. **따옴표(" ") 안의 글자만** 바꾸세요. 쉼표(,)와 괄호는 지우지 않도록 주의합니다.
-2. 항목을 추가하려면 `{` 부터 `},` 까지 한 묶음을 복사해 바로 아래에 붙여 넣고 내용을 고칩니다.
-3. 연구의 `id` 는 서로 겹치지 않게 적습니다(예: `r7`). 주소(`/research/r7`)에 쓰입니다.
-4. 연구 상태는 `"진행중"` 또는 `"완료"`, 수업 자료 유형은 `"강의안"`, `"참고문헌"`, `"과제"`, `"기타"` 중 하나만 쓸 수 있습니다.
-5. 논문·자료 파일은 올리지 않고 Google Drive, DOI, KCI, RISS 등의 **링크**만 적습니다.
-6. 홈 화면의 "대표 연구"는 `research.ts` 맨 앞의 3건, "최근 수업 자료"는 등록일(`createdAt`)이 가장 최근인 3건입니다.
-
-GitHub 웹사이트에서 파일을 열고 연필 모양(Edit) 버튼으로 바로 고쳐도 됩니다. 저장(Commit changes)하면 Netlify가 자동으로 사이트를 다시 만듭니다.
+1. [관리] 화면에서 저장하면 **사이트에 바로 반영**됩니다. GitHub·Netlify를 거치지 않습니다.
+2. 논문·자료 파일은 올리지 않고 Google Drive, DOI, KCI, RISS 등의 **링크**만 적습니다.
+3. 홈 화면의 "대표 연구"는 연도가 가장 최근인 3건, "최근 수업 자료"는 등록일이 가장 최근인 3건입니다.
+4. `profile.ts` 는 **따옴표(" ") 안의 글자만** 바꾸세요. GitHub 웹사이트에서 파일을 열고 연필(Edit) 버튼으로 고친 뒤 Commit changes 를 누르면 Netlify가 자동으로 다시 배포합니다.
 
 ---
 
@@ -85,15 +81,31 @@ GitHub 웹사이트에서 파일을 열고 연필 모양(Edit) 버튼으로 바�
 
 ---
 
-## 5. 다음 단계: Firebase 연동 (지금은 자리만 마련됨)
+## 5. Firebase 설정 (처음 한 번만)
 
-무료 Spark 요금제 기준으로 **Firestore(데이터)와 Google 로그인만** 사용합니다. Cloud Storage(파일 업로드)와 Cloud Functions는 사용하지 않습니다.
+이 사이트는 무료 Spark 요금제의 **Firestore(데이터)와 Authentication(Google 로그인)만** 사용합니다. Cloud Storage, Cloud Functions는 쓰지 않습니다.
+연결 정보는 `src/lib/firebase.ts` 에 들어 있습니다. (Firebase 웹 설정값은 공개되어도 되는 값이며, 데이터 보호는 보안 규칙이 담당합니다)
 
-준비된 자리:
-1. `src/lib/firebase.ts` — Firebase 초기화 위치
-2. `src/services/researchService.ts`, `src/services/teachingService.ts` — 함수 안쪽만 Firestore 호출로 바꾸면 페이지는 그대로 동작
-3. `src/context/AuthContext.tsx` — Google 로그인/로그아웃 자리
-4. `.env.example` — Firebase 설정값 목록 (복사해서 `.env` 로 만들고 값 입력. Netlify에는 **Site configuration → Environment variables** 에 같은 이름으로 입력)
+### 5-1. Firestore 데이터베이스 만들기
+1. [Firebase 콘솔](https://console.firebase.google.com/) → 프로젝트 `claude-edu-bb854` 선택
+2. 왼쪽 메뉴 **빌드 → Firestore Database** → **데이터베이스 만들기**
+3. 위치는 `asia-northeast3 (서울)` 을 고르고, **프로덕션 모드**로 시작합니다. (위치는 나중에 바꿀 수 없습니다)
+
+### 5-2. 보안 규칙 게시
+1. Firestore Database 화면의 **규칙** 탭을 엽니다.
+2. 이 저장소의 `firestore.rules` 파일 내용을 **전부 복사해 붙여 넣고** **게시**를 누릅니다.
+3. 규칙 내용: 누구나 읽기 가능, 관리자 이메일 계정만 쓰기 가능
+
+### 5-3. 로그인 도메인 확인
+**Authentication → 설정 → 승인된 도메인**에 Netlify 주소(예: `내사이트.netlify.app`)가 있어야 그 주소에서 Google 로그인이 됩니다.
+
+### 5-4. 샘플 데이터 넣기 (선택)
+사이트에서 관리자 계정으로 로그인 → [관리] → 목록이 비어 있으면 **"샘플 6건 넣기"** 버튼이 보입니다. 누르면 예시 자료가 들어가며, 이후 수정·삭제하면 됩니다.
+
+### 관리자 계정을 바꾸거나 추가하려면
+1. `src/lib/admin.ts` 의 이메일 목록 수정
+2. `firestore.rules` 의 `["..."]` 이메일 목록도 똑같이 수정
+3. 바뀐 `firestore.rules` 내용을 Firebase 콘솔 규칙 탭에 다시 붙여 넣고 게시
 
 ---
 
@@ -101,11 +113,11 @@ GitHub 웹사이트에서 파일을 열고 연필 모양(Edit) 버튼으로 바�
 
 ```
 src/
-  data/       ← 내용 수정은 여기 3개 파일만
+  data/       profile.ts(교수 정보) + 처음 한 번 쓰는 샘플 데이터
   types/      데이터 형식 정의 (Firestore 구조와 동일)
-  services/   데이터를 가져오는 함수 (나중에 Firestore로 교체)
-  context/    로그인 상태 (준비 중)
-  lib/        공통 도구, Firebase 초기화 자리
+  services/   Firestore에서 데이터를 읽고 쓰는 함수
+  context/    Google 로그인 상태
+  lib/        공통 도구, Firebase 연결(firebase.ts), 관리자 목록(admin.ts)
   components/ 화면 조각 (헤더, 푸터, 카드 등)
   pages/      각 페이지
 ```

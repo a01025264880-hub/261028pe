@@ -28,7 +28,8 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
+  const items = isAdmin ? [...navItems, { to: "/admin", label: "관리", end: false }] : navItems;
 
   useEffect(() => {
     setOpen(false);
@@ -54,7 +55,7 @@ export default function Header() {
 
         <nav aria-label="주요 메뉴" className="hidden md:block">
           <ul className="flex items-center gap-2">
-            {navItems.map((item) => (
+            {items.map((item) => (
               <li key={item.to}>
                 <NavLink to={item.to} end={item.end} className={desktopLinkClass}>
                   {item.label}
@@ -101,7 +102,7 @@ export default function Header() {
       {open && (
         <nav id="mobile-menu" aria-label="모바일 메뉴" className="border-t border-slate-200 bg-white shadow-lg md:hidden">
           <ul className="space-y-1 px-5 py-4">
-            {navItems.map((item) => (
+            {items.map((item) => (
               <li key={item.to}>
                 <NavLink to={item.to} end={item.end} className={mobileLinkClass}>
                   {item.label}

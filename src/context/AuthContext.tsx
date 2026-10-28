@@ -1,9 +1,8 @@
-// 이 파일이 하는 일: 로그인 상태를 사이트 전체에 공유하는 틀 (지금은 동작하지 않음)
-// TODO(Firebase): Firebase Auth 연동 시 이 파일 안쪽만 수정하세요.
-//   - onAuthStateChanged로 user/loading 상태 갱신
-//   - signInWithGoogle: signInWithPopup(auth, new GoogleAuthProvider())
-//   - signOut: firebase/auth의 signOut(auth)
-import { createContext, useContext, useMemo, type ReactNode } from "react";
+// 이 파일이 하는 일: Google 로그인 상태를 사이트 전체에 공유 (로그인·로그아웃·관리자 여부)
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut } from "firebase/auth";
+import { auth, googleProvider } from "../lib/firebase";
+import { isAdminEmail } from "../lib/admin";
 
 export interface AuthUser {
   uid: string;
@@ -15,6 +14,7 @@ export interface AuthUser {
 interface AuthContextValue {
   user: AuthUser | null;
   loading: boolean;
+  isAdmin: boolean;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -22,18 +22,38 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    return onAuthStateChanged(auth, (u) => {
+      setUser(
+        u
+          ? {
+              uid: u.uid,
+              displayName: u.displayName,
+              email: u.email,
+              photoURL: u.photoURL,
+            }
+          : null,
+      );
+      setLoading(false);
+    });
+  }, []);
+
   const value = useMemo<AuthContextValue>(
     () => ({
-      user: null,
-      loading: false,
+      user,
+      loading,
+      isAdmin: isAdminEmail(user?.email),
       signInWithGoogle: async () => {
-        // TODO(Firebase): Google 로그인 구현
+        await signInWithPopup(auth, googleProvider);
       },
       signOut: async () => {
-        // TODO(Firebase): 로그아웃 구현
+        await firebaseSignOut(auth);
       },
     }),
-    [],
+    [user, loading],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

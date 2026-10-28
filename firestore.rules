@@ -1,0 +1,30 @@
+rules_version = '2';
+
+// 인앤에듀 Firestore 보안 규칙
+// - 누구나 연구·수업 자료를 읽을 수 있음 (공개 사이트)
+// - 관리자 계정만 추가·수정·삭제 가능
+// - 이 내용을 Firebase 콘솔 > Firestore Database > 규칙 탭에 붙여 넣고 [게시]를 누르세요.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in ["a01025264880@gmail.com"];
+    }
+
+    match /researches/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /materials/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // 그 밖의 모든 경로는 차단
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
