@@ -1,0 +1,39 @@
+/* 이 파일이 하는 일: 사이트 전체의 색상·글꼴·기본 스타일 정의 */
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
+    "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+
+  --color-navy-50: #f1f4f9;
+  --color-navy-100: #dfe6f1;
+  --color-navy-200: #c1cde2;
+  --color-navy-600: #34507f;
+  --color-navy-700: #283f66;
+  --color-navy-800: #1f3152;
+  --color-navy-900: #172440;
+  --color-navy-950: #0f182c;
+}
+
+@layer base {
+  html {
+    font-size: 16px;
+  }
+  body {
+    @apply bg-white font-sans text-slate-800 antialiased;
+    line-height: 1.7;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply text-navy-900;
+    line-height: 1.35;
+  }
+  :focus-visible {
+    outline: 3px solid #2563eb;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
