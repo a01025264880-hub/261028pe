@@ -5,10 +5,11 @@ export default function StatusBadge({ status }: { status: ResearchStatus }) {
   const ongoing = status === "진행중";
   return (
     <span
-      className={`inline-block rounded px-2 py-0.5 text-sm font-semibold ${
-        ongoing ? "bg-amber-100 text-amber-900" : "bg-slate-200 text-slate-700"
+      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-sm font-semibold ${
+        ongoing ? "bg-gold-100 text-gold-700" : "bg-slate-100 text-slate-600"
       }`}
     >
+      <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${ongoing ? "bg-gold-400" : "bg-slate-400"}`} />
       {status}
     </span>
   );

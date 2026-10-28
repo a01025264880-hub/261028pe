@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { listResearches } from "../services/researchService";
 import { useAsync } from "../lib/useAsync";
 import { usePageTitle } from "../lib/usePageTitle";
+import Container from "../components/Container";
 import PageHeader from "../components/PageHeader";
 import ResearchCard from "../components/ResearchCard";
 import SelectFilter from "../components/SelectFilter";
@@ -41,13 +42,18 @@ export default function ResearchListPage() {
 
   return (
     <>
-      <PageHeader title="연구" description="진행 중이거나 완료된 연구를 소개합니다. 제목이나 키워드로 찾아보세요." />
+      <PageHeader
+        eyebrow="RESEARCH"
+        title="연구"
+        description="진행 중이거나 완료된 연구를 소개합니다. 제목이나 키워드로 찾아보세요."
+      />
+      <Container className="relative -mt-8 pb-4">
 
       <form
         role="search"
         aria-label="연구 검색"
         onSubmit={(e) => e.preventDefault()}
-        className="mb-8 grid gap-4 rounded-lg bg-slate-50 p-5 sm:grid-cols-2 lg:grid-cols-4"
+        className="mb-10 grid gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-lg sm:grid-cols-2 sm:p-6 lg:grid-cols-4"
       >
         <div className="flex flex-col gap-1 sm:col-span-2 lg:col-span-4">
           <label htmlFor="research-search" className="text-sm font-medium text-slate-700">
@@ -59,7 +65,7 @@ export default function ResearchListPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="예: 교사교육"
-            className="h-11 rounded-md border border-slate-300 bg-white px-3 text-base"
+            className="h-12 rounded-lg border border-slate-300 bg-white px-4 text-base"
           />
         </div>
         <SelectFilter
@@ -91,7 +97,7 @@ export default function ResearchListPage() {
             type="button"
             onClick={reset}
             disabled={!hasFilter}
-            className="h-11 w-full rounded-md border border-slate-300 bg-white px-4 text-base text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+            className="h-11 w-full rounded-lg border border-navy-200 bg-white px-4 text-base font-medium text-navy-700 hover:bg-navy-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             조건 초기화
           </button>
@@ -103,13 +109,13 @@ export default function ResearchListPage() {
       {data && all.length === 0 && <StatusMessage kind="empty" message="등록된 연구가 없습니다." />}
       {data && all.length > 0 && (
         <>
-          <p className="mb-4 text-slate-600" aria-live="polite">
-            총 {filtered.length}건
+          <p className="mb-5 text-slate-600" aria-live="polite">
+            총 <strong className="text-navy-900">{filtered.length}</strong>건
           </p>
           {filtered.length === 0 ? (
             <StatusMessage kind="empty" message="조건에 맞는 연구가 없습니다. 검색어나 필터를 바꿔 보세요." />
           ) : (
-            <div className="grid gap-5 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {filtered.map((r) => (
                 <ResearchCard key={r.id} research={r} />
               ))}
@@ -117,6 +123,7 @@ export default function ResearchListPage() {
           )}
         </>
       )}
+      </Container>
     </>
   );
 }

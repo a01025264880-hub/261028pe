@@ -4,7 +4,7 @@ import { profile } from "../data/profile";
 
 export function usePageTitle(title?: string) {
   useEffect(() => {
-    const base = `${profile.name} 연구 포트폴리오`;
+    const base = profile.siteName;
     document.title = title ? `${title} | ${base}` : base;
   }, [title]);
 }

@@ -20,7 +20,7 @@ export default function Layout() {
         본문 바로가기
       </a>
       <Header />
-      <main id="main" className="mx-auto w-full max-w-5xl flex-1 px-5 pt-10 sm:pt-14">
+      <main id="main" className="flex-1">
         <Outlet />
       </main>
       <Footer />

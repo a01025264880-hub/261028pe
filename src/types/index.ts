@@ -48,6 +48,10 @@ export interface Career {
 }
 
 export interface Profile {
+  /** 사이트 이름 (상단 로고, 브라우저 탭 제목에 표시) */
+  siteName: string;
+  /** 사이트 한 줄 설명 (로고 아래, 홈 화면에 표시) */
+  siteTagline: string;
   name: string;
   affiliation: string;
   title: string;

@@ -4,20 +4,30 @@
 @theme {
   --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
     "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  --font-serif: "Noto Serif KR", "Nanum Myeongjo", "AppleMyungjo", serif;
 
+  /* 짙은 네이비 (기본 색) */
   --color-navy-50: #f1f4f9;
   --color-navy-100: #dfe6f1;
   --color-navy-200: #c1cde2;
+  --color-navy-300: #94a8c8;
   --color-navy-600: #34507f;
   --color-navy-700: #283f66;
   --color-navy-800: #1f3152;
   --color-navy-900: #172440;
   --color-navy-950: #0f182c;
+
+  /* 차분한 금색 (강조 포인트) */
+  --color-gold-100: #f5eddc;
+  --color-gold-300: #dcc28f;
+  --color-gold-400: #c9a96e;
+  --color-gold-700: #7d5f2c;
 }
 
 @layer base {
   html {
     font-size: 16px;
+    scroll-behavior: smooth;
   }
   body {
     @apply bg-white font-sans text-slate-800 antialiased;
@@ -35,5 +45,27 @@
     outline: 3px solid #2563eb;
     outline-offset: 2px;
     border-radius: 4px;
+  }
+}
+
+@layer components {
+  /* 네이비 배경 위의 은은한 격자 무늬 */
+  .bg-academic-grid {
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
   }
 }

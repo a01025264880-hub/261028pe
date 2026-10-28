@@ -17,7 +17,7 @@ export default function SelectFilter({ id, label, value, options, onChange }: Se
         id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-11 rounded-md border border-slate-300 bg-white px-3 text-base text-slate-800"
+        className="h-11 rounded-lg border border-slate-300 bg-white px-3 text-base text-slate-800"
       >
         <option value="">전체</option>
         {options.map((o) => (

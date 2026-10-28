@@ -16,7 +16,7 @@ export default function ExternalLinkList({ links, emptyText = "등록된 링크�
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 rounded-md border border-slate-300 px-3 py-1.5 text-base text-navy-700 transition-colors hover:border-navy-600 hover:bg-navy-50"
+            className="inline-flex items-center gap-1.5 rounded-full border border-navy-200 bg-white px-4 py-1.5 text-base font-medium text-navy-700 transition-colors hover:border-navy-900 hover:bg-navy-900 hover:text-white"
           >
             {link.label}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
